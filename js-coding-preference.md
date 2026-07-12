@@ -125,7 +125,7 @@ const fullName = firstName
 ```javascript
 import { getEvents, createEvent } from "./eventService";
 import { formatDate, parseDate }  from "./dateUtils";
-import EventService                from "./eventService";
+import EventService               from "./eventService";
 ```
 
 **Rules:**
@@ -328,7 +328,7 @@ Use spread (`...`) for copying and merging; use rest for collecting remaining va
 
 ```javascript
 // CORRECT — array copy / merge
-const copy  = [ ...original ];
+const copy   = [ ...original ];
 const merged = [ ...items, newItem ];
 
 // CORRECT — object copy / merge (shallow)
@@ -577,7 +577,7 @@ Use ES module syntax (`import` / `export`) instead of CommonJS (`require` / `mod
 ```javascript
 // CORRECT — ES modules
 import { getEvents, createEvent } from "./eventService";
-import EventService from "./eventService";
+import EventService               from "./eventService";
 
 export function formatDate( date ) { /* ... */ }
 export { getEvents, createEvent };
