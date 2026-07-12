@@ -1,5 +1,28 @@
 # JavaScript Coding Preferences
 
+## ES6+ First
+
+**Always prefer modern ES6+ syntax.** The baseline is ES2015 (ES6) and newer. Avoid pre-ES6 patterns unless there is a specific, documented reason. When in doubt, reach for the modern equivalent:
+
+| Avoid (pre-ES6) | Prefer (ES6+) |
+|---|---|
+| `var` | `const` / `let` |
+| `function` expression callbacks | Arrow functions |
+| `"str " + var + " more"` | Template literals |
+| `function Constructor() {}` + prototype | `class` syntax |
+| `require()` / `module.exports` | `import` / `export` |
+| `for (;;)` over iterables | `for...of` / `forEach` / array methods |
+| `{ key: key }` | Shorthand `{ key }` |
+| `obj.fn = function() {}` | Method shorthand `fn() {}` |
+| `arguments` object | Rest parameters `...args` |
+| `Object.assign({}, obj, …)` | Object spread `{ ...obj }` |
+| `Array.prototype.slice.call()` | Array spread `[...iterable]` |
+| Manual default checks `x = x \|\| 5` | Default parameters `( x = 5 )` |
+| Callback pyramids | `async` / `await` |
+| `Promise.then().catch()` chains | `async` / `await` |
+
+The rest of this document details *how* to format and apply these ES6+ constructs.
+
 ## Indentation and Whitespace
 
 **Use TABS, not spaces.** Every indentation level is exactly one tab character.
@@ -60,6 +83,56 @@ const data = {
 - Closing paren/bracket/brace on its own line at the original indentation level
 - Values loosely aligned by `:` or `=` (not strictly columnar, but visually grouped)
 
+## Alignment
+
+**Code should be visually aligned wherever practical.** Alignment makes code scannable — the eye should be able to run down a column of `=`, `:`, or `??` and instantly grasp the shape of the data.
+
+This applies to:
+
+- **Variable declarations** — align by `=` and `??` / `||`:
+
+```javascript
+const contactId    = rc.contactId ?? "";
+const eventId      = rc.eventId   ?? "";
+const isNewBooking = !bookingId;
+```
+
+- **Object literals** — align by `:`:
+
+```javascript
+const data = {
+	  label    : "Annual Conference"
+	, startDate: "2024-06-15"
+	, category : categoryId
+	, isActive : true
+};
+```
+
+- **Multi-line ternary / expressions** — align by operator:
+
+```javascript
+const message = hasPermission
+	? grantAccess()
+	: showDenied();
+
+const fullName = firstName
+	+ " "
+	+ lastName;
+```
+
+- **Import lists** — align by `from`:
+
+```javascript
+import { getEvents, createEvent } from "./eventService";
+import { formatDate, parseDate }  from "./dateUtils";
+import EventService                from "./eventService";
+```
+
+**Rules:**
+- Alignment is **visual grouping**, not strict columnar — use your judgment
+- Align related items within a block; don't force alignment across unrelated blocks
+- Use spaces (not tabs) for the alignment padding between the end of the name and the operator
+
 ## Spacing Around Operators
 
 Always use spaces around operators:
@@ -88,14 +161,17 @@ if(!value){
 
 ### Function Names
 
-Be **specific and descriptive** — avoid generic terms like "update", "process", "handle":
+Be **specific and descriptive** — avoid generic terms like "update", "process", "handle". Use camelCase, starting with a lowercase character; never use PascalCase for functions.
 
 ```javascript
 // BAD — too generic
 function updateData() {}
 function process() {}
 
-// GOOD — specific and descriptive
+// BAD — PascalCase (reserved for classes/constructors)
+function SayHello() {}
+
+// GOOD — specific, descriptive, camelCase
 function archiveExpiredBookings() {}
 function refreshSubscriptionRenewalGrades() {}
 ```
@@ -104,13 +180,25 @@ function refreshSubscriptionRenewalGrades() {}
 
 **Prefer arrow functions for callbacks and expressions.** Arrow functions provide a concise syntax and lexical `this` binding, reducing boilerplate and avoiding `this`-related bugs.
 
+Use **implicit return** (expression body) when the arrow body is a single expression:
+
 ```javascript
-// CORRECT — arrow functions
+// CORRECT — implicit return
+arr.map( ( e ) => e.id );
+const sum = arr.reduce( ( a, b ) => a + b );
+const add = ( a, b ) => a + b;
+
+// WRONG — unnecessary braces + return for a single expression
+arr.map( ( e ) => {
+	return e.id;
+} );
+```
+
+```javascript
+// CORRECT — arrow functions for callbacks
 fetchData().then( ( data ) => processData( data ) );
 events.filter( ( event ) => event.isActive );
 setTimeout( () => doSomething(), 1000 );
-
-const add = ( a, b ) => a + b;
 
 // Single-param arrow: parens optional, but keep consistent with project style
 // When using leading-comma formatting, parens around single params are preferred
@@ -122,15 +210,53 @@ fetchData().then( function( data ) { return processData( data ); } );
 events.filter( function( event ) { return event.isActive; } );
 ```
 
-**Use regular function declarations for top-level named functions** where hoisting is useful or the function is exported:
+**Do not use arrow functions to assign a function to an identifier.** Use a proper function declaration instead. Arrow functions assigned to variables don't hoist and obscure the name in stack traces.
 
 ```javascript
-// Top-level, exported — function declaration is fine
+// CORRECT — function declaration
+function calculateTotal( items ) {
+	return items.reduce( ( sum, item ) => sum + item.price, 0 );
+}
+
+// WRONG — arrow assigned to a variable
+const calculateTotal = ( items ) => {
+	return items.reduce( ( sum, item ) => sum + item.price, 0 );
+};
+```
+
+**Use regular function declarations for top-level named functions and methods.** Arrow functions have no `this` binding, which is frequently desired for callbacks, but for methods and standalone named functions, a declaration is clearer:
+
+```javascript
+// CORRECT — function declaration for top-level / exported
 function archiveExpiredBookings() { /* ... */ }
 module.exports = { archiveExpiredBookings };
+
+// CORRECT — method shorthand in objects
+const service = {
+	getEvents() {
+		return fetch( "/events" );
+	}
+};
+
+// WRONG — arrow for method or named identifier
+const archiveExpiredBookings = () => { /* ... */ };
+const service = {
+	getEvents: () => fetch( "/events" )
+};
 ```
 
 ## Variable Declarations
+
+Always use `const` by default. Only use `let` when the variable must be reassigned. Never use `var`.
+
+```javascript
+// CORRECT
+const MAX_SIZE = 100;
+let currentIndex = 0;
+
+// WRONG
+var MAX_SIZE = 100;
+```
 
 Align related declarations by `=`:
 
@@ -172,6 +298,68 @@ const email = record.email;
 
 // WRONG
 const name = record.label, age = record.age, email = record.email;
+```
+
+### Destructuring
+
+Prefer destructuring to extract values from objects and arrays:
+
+```javascript
+// CORRECT — object destructuring
+const { name, age, email } = user;
+const { projectId, isActive } = rc;
+
+// CORRECT — array destructuring
+const [ first, second ] = items;
+const [ head, ...tail ] = items;
+
+// CORRECT — nested destructuring
+const { address: { city, country } } = user;
+
+// WRONG — manual extraction
+const name  = user.name;
+const age   = user.age;
+const email = user.email;
+```
+
+### Spread & Rest
+
+Use spread (`...`) for copying and merging; use rest for collecting remaining values:
+
+```javascript
+// CORRECT — array copy / merge
+const copy  = [ ...original ];
+const merged = [ ...items, newItem ];
+
+// CORRECT — object copy / merge (shallow)
+const defaults = { ...base, ...overrides };
+
+// CORRECT — rest parameters (collect remaining args)
+function logAll( prefix, ...values ) {
+	values.forEach( ( v ) => console.log( prefix, v ) );
+}
+
+// WRONG — Object.assign / Array.prototype.slice
+const merged = Object.assign( {}, base, overrides );
+const args = Array.prototype.slice.call( arguments );
+```
+
+### Default Parameters
+
+Use default parameter syntax instead of manual checks in the function body:
+
+```javascript
+// CORRECT
+function fetchEvents( limit = 10, offset = 0 ) {
+	// ...
+}
+
+// WRONG
+function fetchEvents( limit, offset ) {
+	limit  = limit  ?? 10;
+	offset = offset ?? 0;
+	// ...
+}
 ```
 
 ## Strings
@@ -382,6 +570,24 @@ function loadPageData() {
 }
 ```
 
+## ES Modules
+
+Use ES module syntax (`import` / `export`) instead of CommonJS (`require` / `module.exports`).
+
+```javascript
+// CORRECT — ES modules
+import { getEvents, createEvent } from "./eventService";
+import EventService from "./eventService";
+
+export function formatDate( date ) { /* ... */ }
+export { getEvents, createEvent };
+export default EventService;
+
+// WRONG — CommonJS
+const { getEvents, createEvent } = require( "./eventService" );
+module.exports = { getEvents, createEvent };
+```
+
 ## Objects & Arrays
 
 Use literal syntax, not constructors:
@@ -506,9 +712,15 @@ If the same helper function appears in two files, extract it to a shared module 
 - [ ] No trailing whitespace
 - [ ] Leading comma pattern used for multi-line arguments/arrays/objects
 - [ ] Spaces around operators and inside parens
-- [ ] `const`/`let` used (no `var`), one variable per line
+- [ ] Code visually aligned: `=` / `:` / `??` / `from` columns grouped
+- [ ] ES6+ syntax used throughout (see ES6+ First table)
+- [ ] `const`/`let` used (no `var`), `const` by default, one variable per line
+- [ ] Destructuring used for object/array property access
+- [ ] Spread/rest used instead of `Object.assign` / `arguments`
+- [ ] Default parameter syntax used, not manual checks in body
 - [ ] Template literals for interpolation; plain strings otherwise
 - [ ] `Number()`/`String()` for type conversion (not `+val`/`"" + val`)
+- [ ] ES modules (`import`/`export`) over CommonJS (`require`)
 - [ ] Strict equality (`===`) used; `==` only for `== null`
 - [ ] Truthy shortcuts for booleans; ternary for simple conditionals
 - [ ] Braces always used with control flow, even single-statement
