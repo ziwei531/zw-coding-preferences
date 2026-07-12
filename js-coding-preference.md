@@ -1,7 +1,5 @@
 # JavaScript Coding Preferences
 
-General formatting conventions, adapted from Pixl8 team standards for use in JavaScript.
-
 ## Indentation and Whitespace
 
 **Use TABS, not spaces.** Every indentation level is exactly one tab character.
