@@ -157,7 +157,7 @@ if(!value){
 - **Variables/functions:** camelCase — `contactId`, `bookingRef`, `isActive`, `getActiveEvents()`
 - **Classes/constructors:** PascalCase — `EventService`, `SubscriptionGrade`
 - **Private/internal helper functions:** prefixed with `_` — `_setupFeatures()`, `_notifyDelegates()`
-- **Constants (true constants):** UPPER_SNAKE_CASE — `MAX_RETRIES`, `DEFAULT_TIMEOUT`
+- **Constants:** camelCase, same as variables — `maxRetries`, `defaultTimeout`. Immutable data declared with `const` does not need a different casing convention.
 
 ### Function Names
 
@@ -251,11 +251,11 @@ Always use `const` by default. Only use `let` when the variable must be reassign
 
 ```javascript
 // CORRECT
-const MAX_SIZE = 100;
-let currentIndex = 0;
+const maxSize     = 100;
+let currentIndex  = 0;
 
 // WRONG
-var MAX_SIZE = 100;
+var maxSize = 100;
 ```
 
 Align related declarations by `=`:
@@ -281,11 +281,11 @@ Prefer `const` for values that won't be reassigned; use `let` when reassignment 
 
 ```javascript
 // CORRECT
-const MAX_SIZE = 100;
+const maxSize    = 100;
 let currentIndex = 0;
 
 // WRONG
-var MAX_SIZE = 100;
+var maxSize = 100;
 ```
 
 Declare one variable per line — don't chain or comma-separate declarations.
