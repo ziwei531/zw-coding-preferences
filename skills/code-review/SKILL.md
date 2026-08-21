@@ -5,21 +5,22 @@ description: Review a branch diff for logic flaws and coding standards.
 
 # Code Review Skill
 
-Use this standalone skill for `/code-review`. Review the current work against
-the repository's stable base branch, attack the logic first, then check any
-coding preferences discoverable in the repository. Keep the review concise and
-report only useful findings.
+Use this standalone skill for `/code-review`. Review the current branch's work
+against the repository's stable base branch, attack the logic first, then check
+any coding preferences discoverable in the repository. Keep the review concise
+and report only useful findings. A pull request is optional, not required.
 
 ## 1. Establish the Diff
 
 1. Confirm the repository and current branch.
 2. Choose the comparison base in this order:
-   - the pull request's declared base, if reviewing a pull request;
+   - the explicitly supplied base, if the user gave one;
    - `stable`, if it exists;
    - `main`, if it exists;
    - `master`, if it exists.
-3. Compare the current work against that base, including committed and relevant
-   uncommitted changes.
+3. Compare the current branch against that base, including committed and
+   relevant uncommitted changes. If reviewing a pull request, its declared base
+   may be used instead.
 4. If no suitable base exists, say so instead of guessing.
 5. Inspect the changed files and enough surrounding code, callers, tests, and
    configuration to understand their behavior.
