@@ -1,5 +1,5 @@
 ---
-name: git-commit-convention
+name: commit
 description: Use consistent Conventional Commit messages.
 version: 0.1.0
 author: Zi Wei (ziwei531), Hermes Agent
