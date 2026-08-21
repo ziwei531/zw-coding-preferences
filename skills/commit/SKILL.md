@@ -3,8 +3,6 @@ name: commit
 description: Use consistent Conventional Commit messages.
 version: 0.1.0
 author: Zi Wei (ziwei531), Hermes Agent
-license: MIT
-platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [git, commits, conventional-commits, version-control]
