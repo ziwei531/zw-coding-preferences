@@ -1,12 +1,6 @@
 ---
 name: code-review
 description: Attack logic flaws, then review repository coding standards.
-version: 0.1.0
-author: Zi Wei (ziwei531), Hermes Agent
-metadata:
-  hermes:
-    tags: [code-review, logic, adversarial-testing, coding-standards]
-    related_skills: []
 ---
 
 # Code Review Skill

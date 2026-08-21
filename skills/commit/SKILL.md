@@ -1,12 +1,6 @@
 ---
 name: commit
 description: Use consistent Conventional Commit messages.
-version: 0.1.0
-author: Zi Wei (ziwei531), Hermes Agent
-metadata:
-  hermes:
-    tags: [git, commits, conventional-commits, version-control]
-    related_skills: []
 ---
 
 # Git Commit Convention Skill
